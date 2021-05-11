@@ -4,6 +4,8 @@ import cv2
 import edgeiq
 import numpy as np 
 
+difficulty = 'easy'
+
 tracker = edgeiq.KalmanTracker(deregister_frames=4, max_distance=100)
 # tracker = edgeiq.CentroidTracker(deregister_frames=4, max_distance=100)
 
@@ -11,10 +13,10 @@ def main():
     obj_detect = edgeiq.ObjectDetection("alwaysai/yolo_v3")
     obj_detect.load(engine=edgeiq.Engine.DNN)
  
-    video_path = "data/inputs/hard.mp4"
+    video_path = f"data/inputs/{difficulty}.mp4"
     stream_context = edgeiq.FileVideoStream(f"{video_path}", play_realtime=True)
 
-    with stream_context as video_stream:
+    with stream_context as video_stream, edgeiq.Streamer() as streamer:
         while video_stream.more():
             
             image = video_stream.read()
@@ -26,7 +28,7 @@ def main():
             image = draw_tracked_boxes(image, res)
             # image = edgeiq.markup_image(image, people_predictions)
 
-            cv2.imwrite(f"test.jpg", image)
+            streamer.send_data(image)
 
 
 def draw_tracked_boxes(
