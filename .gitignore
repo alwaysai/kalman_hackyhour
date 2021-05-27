@@ -2,3 +2,6 @@ __pycache__/
 venv/
 models/
 *alwaysai*
+
+alwaysai.target.json
+alwaysai.project.json
