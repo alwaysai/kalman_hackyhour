@@ -2,7 +2,7 @@ import time
 
 import cv2
 import edgeiq
-import numpy as np 
+import numpy as np
 
 difficulty = 'easy'
 
@@ -18,11 +18,11 @@ def main():
 
     with stream_context as video_stream, edgeiq.Streamer() as streamer:
         while video_stream.more():
-            
+
             image = video_stream.read()
             results = obj_detect.detect_objects(image, confidence_level=.5)
             specific_predictions = [r for r in results.predictions if r.label == 'person']
-            
+
             res = tracker.update(specific_predictions)
 
             image = draw_tracked_boxes(image, res)
@@ -47,13 +47,12 @@ def draw_tracked_boxes(
         id_size = frame_scale / 10
     if id_thickness is None:
         id_thickness = int(frame_scale / 5)
-    color_is_None = line_color == None
 
     for obj_id, pred in objects.items():
         line_color = Color.random(obj_id)
 
-        points = np.array([[pred.box.start_x, pred.box.start_y], 
-                            [pred.box.end_x, pred.box.end_y]])
+        points = np.array([[pred.box.start_x, pred.box.start_y],
+                           [pred.box.end_x, pred.box.end_y]])
         points = points.astype(int)
         cv2.rectangle(
             frame,
@@ -106,6 +105,7 @@ class Color:
             and c not in ("random", "red", "white", "grey", "black", "silver")
         ]
         return getattr(Color, color_list[obj_id % len(color_list)])
+
 
 if __name__ == "__main__":
     main()
